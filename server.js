@@ -4,6 +4,7 @@ var bodyParser  = require("body-parser");
 var md5 = require('md5');
 var rest = require("./REST.js");
 var app  = express();
+var config = require("./config.js");
 
 function REST(){
     var self = this;
@@ -12,19 +13,17 @@ function REST(){
 
 REST.prototype.connectMysql = function() {
     var self = this;
-    var pool      =    mysql.createPool({
-        connectionLimit : 10,
-        // host     : 'us-cdbr-iron-east-02.cleardb.net',
-        // user     : 'b6c98aad74a22c',
-        // password : '2a75abe3',
-        // database : 'heroku_1dd38a75e1b5ba5',
-		// host     : 'us-cdbr-iron-east-02.cleardb.net',
-        host     : 'localhost',
-		user     : 'root',
-        password : '',
-        database : 'cimitery',
-        debug    :  true
-    });
+	
+	var db = config.database;
+	
+	var pool = mysql.createPool({
+		host:		db.host,
+		user:		db.user,
+		password:	db.password,
+		database:	db.database,
+		debug:		db.debug
+	});
+
     pool.getConnection(function(err,connection){
         if(err) {
 	      console.log("server.js: Error in MySQL Connection");
