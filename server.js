@@ -18,7 +18,7 @@ REST.prototype.connectMysql = function() {
         user     : 'b6c98aad74a22c',
         password : '2a75abe3',
         database : 'heroku_1dd38a75e1b5ba5',
-        debug    :  false
+        debug    :  true
     });
     pool.getConnection(function(err,connection){
         if(err) {
