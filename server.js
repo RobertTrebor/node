@@ -13,7 +13,7 @@ function REST(){
 REST.prototype.connectMysql = function() {
     var self = this;
     var pool      =    mysql.createPool({
-        connectionLimit : 100,
+        connectionLimit : 10,
         host     : 'us-cdbr-iron-east-02.cleardb.net',
         user     : 'b6c98aad74a22c',
         password : '2a75abe3',
@@ -22,6 +22,7 @@ REST.prototype.connectMysql = function() {
     });
     pool.getConnection(function(err,connection){
         if(err) {
+	      console.log("server.js: Error in MySQL Connection");
           self.stop(err);
         } else {
           self.configureExpress(connection);
@@ -35,7 +36,6 @@ REST.prototype.configureExpress = function(connection) {
       app.use(bodyParser.urlencoded({ extended: true }));
       app.use(bodyParser.json());
       var router = express.Router();
-//      app.use('/api', router);
 	  app.use('', router);
       var rest_router = new rest(router,connection,md5);
       self.startServer();
