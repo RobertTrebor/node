@@ -19,7 +19,7 @@ REST.prototype.connectMysql = function() {
         // password : '2a75abe3',
         // database : 'heroku_1dd38a75e1b5ba5',
 		// host     : 'us-cdbr-iron-east-02.cleardb.net',
-        host     : 'localhost:3306',
+        host     : 'localhost',
 		user     : 'root',
         password : '',
         database : 'cimitery',
