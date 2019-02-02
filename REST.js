@@ -1,31 +1,35 @@
-var mysql   = require("mysql");
+var mysql   = require('mysql');
 
-function REST_ROUTER(router,connection,md5) {
+function REST_ROUTER(router,pool,md5) {
     var self = this;
-    self.handleRoutes(router,connection,md5);
+    self.handleRoutes(router,pool,md5);
 }
 
-REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
+REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
     var self = this;
     router.get("/",function(req,res){
         res.json({"Message" : "Hello World !"});
     });
 
     router.get("/graves",function(req,res){
-        var query = "SELECT * FROM ??";
+        var queryString = "SELECT * FROM ??";
         var table = ["grave"];
-        query = mysql.format(query,table);
-		console.log(query);
-        connection.query(query,function(err,rows){
-            if(err) {
-                res.json({"Error" : true, "Message" : "Error executing MySQL query"});
-				console.log("REST.JS:   Error executing MySQL query");
-            } else {
-                res.json({"Error" : false, "Message" : "Success", "Users" : rows});
-            }
+        queryString = mysql.format(query,table);
+		console.log(queryString);
+        pool.getConnection(function(err,connection){
+            connection.query(queryString, function(err, rows){
+                connection.release();
+                if(err) {
+                    res.json({"Error" : true, "Message" : "Error executing MySQL query"});
+                    console.log("REST.JS:   Error executing MySQL query");
+                } else {
+                    res.json({"Error" : false, "Message" : "Success", "Users" : rows});
+                }
+            });
+
         });
     });
-
+/*
     router.get("/graves/:id",function(req,res){
         var query = "SELECT * FROM ?? WHERE ??=?";
         var table = ["grave","g_id", req.params.id];
@@ -79,7 +83,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
                 res.json({"Error" : false, "Message" : "Deleted the user with email "+req.params.email});
             }
         });
-    });
+    });*/
 }
 
 module.exports = REST_ROUTER;

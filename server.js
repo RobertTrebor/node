@@ -1,10 +1,10 @@
-var express = require("express");
-var mysql   = require("mysql");
-var bodyParser  = require("body-parser");
+var express = require('express');
+var mysql   = require('mysql');
+var bodyParser  = require('body-parser');
 var md5 = require('md5');
-var rest = require("./REST.js");
+var rest = require('./REST.js');
 var app  = express();
-var config = require("./config.js");
+var config = require('./config.js');
 
 function REST(){
     var self = this;
@@ -24,24 +24,17 @@ REST.prototype.connectMysql = function() {
 		debug:		db.debug
 	});
 
-    pool.getConnection(function(err,connection){
-        if(err) {
-	      console.log("server.js: Error in MySQL Connection");
-          self.stop(err);
-        } else {
-          self.configureExpress(connection);
-		  console.log("RL: Mysql connected");
-        }
-    });
+	self.configureExpress(pool);
+	console.log("RL: Mysql connected");
 }
 
-REST.prototype.configureExpress = function(connection) {
+REST.prototype.configureExpress = function(pool) {
       var self = this;
       app.use(bodyParser.urlencoded({ extended: true }));
       app.use(bodyParser.json());
-      var router = express.Router();
-	  app.use('', router);
-      var rest_router = new rest(router,connection,md5);
+      var router = express.Router(pool);
+	  app.use('/', router);
+      var rest_router = new rest(router,pool,md5);
       self.startServer();
 }
 
@@ -51,24 +44,17 @@ REST.prototype.startServer = function() {
       });
 }
 
-REST.prototype.stop = function(err) {
+/*REST.prototype.stop = function(err) {
     console.log("ISSUE WITH MYSQL \n" + err);
     process.exit(1);
-}
+}*/
 
 new REST();
 
 //------------------------------------------
 
 var sessions        = require('./routes/sessions');
-//var	graves			= require('./routes/graves');
 
-/*
-var express = require('express');
-var bodyParser      = require('body-parser');
-var methodOverride  = require('method-override');
-var app = express();
-*/
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
