@@ -14,7 +14,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
     router.get("/graves",function(req,res){
         var queryString = "SELECT * FROM ??";
         var table = ["grave"];
-        queryString = mysql.format(query,table);
+        queryString = mysql.format(queryString,table);
 		console.log(queryString);
         pool.getConnection(function(err,connection){
             connection.query(queryString, function(err, rows){
